@@ -6,7 +6,7 @@ provider "aws" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "4.0.0"  # Specify the version of the module
+  version = ">= 4.48.0"
 
   name = "my-vpc"
   cidr = "10.0.0.0/16"
@@ -193,7 +193,7 @@ resource "aws_key_pair" "main" {
 resource "aws_instance" "public" {
   ami           = "ami-060e277c0d4cce553"  # Ubuntu AMI
   instance_type = "t2.micro"
-  subnet_id     = module.vpc.public.id
+  subnet_id     = module.vpc.public_subnets.id
   key_name      = aws_key_pair.main.key_name
 
   tags = {
@@ -207,7 +207,7 @@ resource "aws_instance" "public" {
 resource "aws_instance" "private" {
   ami           = "ami-060e277c0d4cce553"  # Ubuntu AMI
   instance_type = "t2.micro"
-  subnet_id     = module.vpc.private.id
+  subnet_id     = module.vpc.private_subnets.id
   key_name      = aws_key_pair.main.key_name
   user_data = <<-EOF
               #!/bin/bash
