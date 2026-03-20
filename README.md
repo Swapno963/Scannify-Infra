@@ -44,3 +44,9 @@ This repository contains Terraform configurations to deploy a full-stack applica
     unzip awscliv2.zip
     sudo ./aws/install
     ```
+
+4. Apply Changes
+    ```bash
+    terraform init
+    terraform apply
+    ```
