@@ -107,7 +107,36 @@ resource "aws_instance" "private" {
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.private.id
   key_name      = aws_key_pair.main.key_name
+  user_data = <<-EOF
+              #!/bin/bash
+              # Update system
+              apt-get update -y
+              apt-get upgrade -y
 
+              # Install Node.js
+              curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+              apt-get install -y nodejs git
+
+              # Pull backend code 
+              cd /home/ubuntu
+              git https://github.com/Swapno963/Scannify-Backend.git app
+              cd app/Scannify-Backend
+              npm install
+
+              # Start the Node.js app 
+              npm start
+
+
+
+              # Pull backend code 
+              cd /home/ubuntu
+              git https://github.com/Swapno963/Scannify.git app
+              cd app/Scannify
+              npm install
+
+              # Start the Node.js app 
+              npm start
+              EOF
   tags = {
     Name = "private-instance"
   }
