@@ -215,6 +215,23 @@ resource "aws_instance" "private" {
               apt-get update -y
               apt-get upgrade -y
 
+              # Creating .env file dynamically
+              cat > .env <<EOT
+              # PostgreSQL
+              DB_HOST=localhost
+              DB_PORT=5432
+              DB_USER=postgres
+              DB_PASSWORD=postgres123
+              DB_NAME=mydb
+              # Express server
+              PORT=3000
+              # PostgreSQL connection string
+              DATABASE_URL=postgres://postgres:postgres123@localhost:5432/mydb
+              JWT_SECRET=supersecretkey
+              JWT_EXPIRES_IN=1d
+              VITE_API_URL=http://localhost:3000
+              EOT
+
               # Install Node.js
               curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
               apt-get install -y nodejs git
