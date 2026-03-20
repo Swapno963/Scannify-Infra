@@ -1,5 +1,3 @@
-# main.tf
-
 provider "aws" {
   region = "ap-southeast-1"
 }
@@ -63,7 +61,7 @@ resource "aws_security_group" "private_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["10.0.1.0/24"]  # Only allow SSH from the public subnet
+    cidr_blocks = ["10.0.1.0/24"]  # Only allowing SSH from the public subnet
   }
 
   egress {
@@ -78,9 +76,8 @@ resource "aws_security_group" "private_sg" {
   }
 }
 
-##########################
-# 1. Security Group for ALB
-##########################
+
+# Security Group for ALB
 resource "aws_security_group" "alb_sg" {
   vpc_id = module.vpc.vpc_id  # Use your VPC ID from module
 
@@ -107,10 +104,8 @@ resource "aws_security_group" "alb_sg" {
   }
 }
 
-#######################################
-# 2. Security Group Update for Private Instance
+# Security Group Update for Private Instance
 # Allow HTTP traffic from ALB
-#######################################
 resource "aws_security_group_rule" "allow_alb_to_private" {
   type                     = "ingress"
   from_port                = 80
@@ -121,9 +116,7 @@ resource "aws_security_group_rule" "allow_alb_to_private" {
   description              = "Allow HTTP from ALB"
 }
 
-##########################
-# 3. Create Application Load Balancer
-##########################
+# Create Application Load Balancer
 resource "aws_lb" "frontend_alb" {
   name               = "frontend-alb"
   load_balancer_type = "application"
@@ -136,9 +129,7 @@ resource "aws_lb" "frontend_alb" {
   }
 }
 
-##########################
-# 4. Target Group for Private Frontend Instance
-##########################
+# Target Group for Private Frontend Instance
 resource "aws_lb_target_group" "frontend_tg" {
   name     = "frontend-tg"
   port     = 80
@@ -159,18 +150,14 @@ resource "aws_lb_target_group" "frontend_tg" {
   }
 }
 
-###################################
-# 5. Attach Private Instance to Target Group
-###################################
+# Attach Private Instance to Target Group
 resource "aws_lb_target_group_attachment" "frontend_attachment" {
   target_group_arn = aws_lb_target_group.frontend_tg.arn
-  target_id        = aws_instance.private.id  # Replace with your frontend instance
+  target_id        = aws_instance.private.id  
   port             = 80
 }
 
-##########################
-# 6. ALB Listener
-##########################
+# ALB Listener
 resource "aws_lb_listener" "frontend_listener" {
   load_balancer_arn = aws_lb.frontend_alb.arn
   port              = "80"
@@ -184,7 +171,7 @@ resource "aws_lb_listener" "frontend_listener" {
 # Key Pair
 resource "aws_key_pair" "main" {
   key_name   = "main-key"
-  public_key = file("~/.ssh/id_rsa.pub")  # Replace with your own public key
+  public_key = file("~/.ssh/id_rsa.pub")  
 }
 
 
