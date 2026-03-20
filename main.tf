@@ -128,7 +128,7 @@ resource "aws_lb" "frontend_alb" {
   name               = "frontend-alb"
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = module.vpc.public_subnets  # Public subnet
+  subnets            = module.vpc.public_subnets[0]  # Public subnet
   enable_deletion_protection = false
 
   tags = {
@@ -193,7 +193,7 @@ resource "aws_key_pair" "main" {
 resource "aws_instance" "public" {
   ami           = "ami-060e277c0d4cce553"  # Ubuntu AMI
   instance_type = "t2.micro"
-  subnet_id     = module.vpc.public_subnets.id
+  subnet_id     = module.vpc.public_subnets[0]
   key_name      = aws_key_pair.main.key_name
 
   tags = {
@@ -207,7 +207,7 @@ resource "aws_instance" "public" {
 resource "aws_instance" "private" {
   ami           = "ami-060e277c0d4cce553"  # Ubuntu AMI
   instance_type = "t2.micro"
-  subnet_id     = module.vpc.private_subnets.id
+  subnet_id     = module.vpc.private_subnets[0]
   key_name      = aws_key_pair.main.key_name
   user_data = <<-EOF
               #!/bin/bash
